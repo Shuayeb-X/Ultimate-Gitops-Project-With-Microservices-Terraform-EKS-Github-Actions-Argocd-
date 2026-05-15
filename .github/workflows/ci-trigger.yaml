@@ -2,7 +2,8 @@ name: Microservices Trigger CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - "src/**"
 
@@ -12,10 +13,11 @@ permissions:
 
 jobs:
   # -------------------------------
-  # Job 1: Detect changed services
+  # Detect changed services
   # -------------------------------
   detect-changes:
     runs-on: ubuntu-latest
+
     outputs:
       services: ${{ steps.changed.outputs.services }}
 
@@ -37,12 +39,12 @@ jobs:
           echo "Detected services: $SERVICES"
           echo "services=$SERVICES" >> $GITHUB_OUTPUT
 
-
-  # --------------------------------------------------
-  # Job 2: Call reusable workflow (matrix per service)
-  # --------------------------------------------------
+  # -------------------------------
+  # Build and push changed services
+  # -------------------------------
   build-and-push:
     needs: detect-changes
+
     if: needs.detect-changes.outputs.services != '[]'
 
     strategy:
@@ -50,8 +52,6 @@ jobs:
       matrix:
         service: ${{ fromJson(needs.detect-changes.outputs.services) }}
 
-    # 🚨 IMPORTANT:
-    # Reusable workflows are called at JOB level
     uses: ./.github/workflows/microservice-ci.yaml
 
     with:
