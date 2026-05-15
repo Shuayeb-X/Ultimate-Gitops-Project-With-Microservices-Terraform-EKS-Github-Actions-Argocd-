@@ -3,11 +3,12 @@ kind: Application
 metadata:
   name: boutique-app
   namespace: argocd
+
 spec:
   project: default
 
   source:
-    repoURL: https://github.com/laxmikantagiri/Production-Grade_GitOps-Driven_Microservices-Demo.git
+    repoURL: https://github.com/Shuayeb-X/Ultimate-Gitops-Project-With-Microservices-Terraform-EKS-GithubActions-Argocd.git
     targetRevision: HEAD
     path: .
 
@@ -20,4 +21,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
