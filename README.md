@@ -1,9 +1,52 @@
 
+
+#  Production Grade GitOps-Driven Microservices Platform on AWS EKS
+---
+
+# 📌 Project Overview / Architecture Overview
+
+A production-grade DevOps infrastructure setup using AWS EKS, Terraform, GitHub Actions, ArgoCD, Prometheus, Grafana, ELK Stack, and Gateway API following GitOps and cloud-native best practices.
+
+The platform includes:
+
+- Infrastructure provisioning with Terraform
+- CI/CD using GitHub Actions + ArgoCD
+- Kubernetes deployment on Amazon EKS
+- GitOps workflow
+- Monitoring with Prometheus + Grafana
+- Centralized logging using EFK Stack
+- Security scanning using Trivy
+- AWS Load Balancer Controller
+- Gateway API implementation
+- DNS & SSL automation
+- Slack notification integration
+- Production-grade observability
+
+---
+
+# 🏗️ Complete Architecture
+
+## 🔥 Infrastructure Architecture Diagram
+
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/Diagram.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Project Introduction
 
 ## Project archietecure
 
-![image alt](Diagram.png)
 # Intro to Online Boutique App
 
 This is a type of e-commerce platform, but unlike Amazon-type stores, it focuses on:
