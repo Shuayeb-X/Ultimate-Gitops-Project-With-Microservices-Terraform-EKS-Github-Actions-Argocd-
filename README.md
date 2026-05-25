@@ -383,15 +383,6 @@ There is **NO dedicated “orders database”**.
 
 ---
 
-# Project Architecture
-
-![Gitops Project.gif](docs/images/Gitops_Project.gif)
-
-![Gitops Project.drawio.png](docs/images/Gitops_Project.png)
----
----
----
----
 # Implementation
 
 ## Install tools in Local Machine
@@ -403,7 +394,7 @@ There is **NO dedicated “orders database”**.
 Clone the repo:
 
 ```bash
-https://github.com/laxmikantagiri/Production-Grade_GitOps-Driven_Microservices-Demo.git
+https://github.com/Shuayeb-X/Production-Grade_GitOps-Driven_Microservices-Demo.git
 ```
 
 chnage directory to terraform:
@@ -420,7 +411,7 @@ Clone te repo , `cd` to `terraform` directory. Do
 terraform init
 Terraform plan 
 ```
-
+ 
 Verify the resources and then do
 
 ```bash
@@ -431,6 +422,14 @@ After apply you should see the bastion host’s public IP as outputs.
 
 At the current directory you would see the instance’s private key as well
 
+
+
+## Cluster+ Baston Host Created
+### Baston Host
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/Cluster%20Creating%20%2B%20Baston%20Host%20with%20Terraform.png)
+---
+### Cluster
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/cluster%20created.png)
 ## Set up Terraform Remote Backend (Optional)
 
 Create a bucket using Console or AWS CLI.
