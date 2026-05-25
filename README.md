@@ -27,13 +27,11 @@ The platform includes:
 # 🏗️ Complete Architecture
 
 ## 🔥 Infrastructure Architecture Diagram
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/Diagram.png)
 
+---
 ![Gitops Project.gif](docs/images/Gitops_Project.gif)
 
-![Gitops Project.drawio.png](docs/images/Gitops_Project.png)
----
-
-![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/Diagram.png)
 
 # 🛍️ About Online Boutique Application
 
