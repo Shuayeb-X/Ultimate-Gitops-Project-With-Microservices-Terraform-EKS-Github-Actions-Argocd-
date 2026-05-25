@@ -1,5 +1,9 @@
+
 # Project Introduction
 
+## Project archietecure
+
+![image alt] (https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/Diagram.png)
 # Intro to Online Boutique App
 
 This is a type of e-commerce platform, but unlike Amazon-type stores, it focuses on:
