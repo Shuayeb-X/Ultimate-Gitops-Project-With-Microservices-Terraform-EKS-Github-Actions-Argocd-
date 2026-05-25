@@ -30,22 +30,102 @@ The platform includes:
 
 ![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/Diagram.png)
 
+# 🛍️ About Online Boutique Application
+
+This project uses the **Online Boutique Application**, a cloud-native microservices demo application designed to simulate a real-world e-commerce platform.
+
+Unlike traditional monolithic applications, this platform is built using multiple independent microservices that work together to deliver the complete shopping experience.
+
+The application demonstrates how modern distributed systems are designed, deployed, monitored, and scaled in Kubernetes environments.
+
+---
+
+# 💡 Understanding Microservices Architecture
+
+Microservices Architecture is a software design approach where an application is divided into multiple small and independent services.
+
+Each service:
+
+- Handles a specific business capability
+- Runs independently
+- Can be deployed separately
+- Communicates with other services using APIs or gRPC
+- Scales independently based on workload
+
+This architecture improves:
+
+- Scalability
+- Maintainability
+- Fault isolation
+- Deployment flexibility
+- Team productivity
+
+---
+
+# ⚔️ Monolithic vs Microservices
+
+| Monolithic Architecture ❌ | Microservices Architecture ✅ |
+|---|---|
+| Single large application | Multiple independent services |
+| Difficult to scale | Easy horizontal scaling |
+| Single point of failure | Better fault isolation |
+| Slower deployments | Faster deployments |
+| Tight coupling | Loose coupling |
+| Technology limitations | Polyglot architecture |
+
+---
+
+# 🧩 Online Boutique Microservices
+## Architecture 
+![image.png](docs/images/Architecture01.png)
 
 
+The application consists of multiple microservices written in different programming languages communicating over gRPC.
 
+| Service | Language | Responsibility |
+|---|---|---|
+| frontend | Go | Exposes frontend UI and handles user requests |
+| cartservice | C# | Manages user shopping cart |
+| productcatalogservice | Go | Provides product catalog data |
+| currencyservice | Node.js | Currency conversion service |
+| paymentservice | Node.js | Handles payment processing |
+| shippingservice | Go | Calculates shipping cost |
+| emailservice | Python | Sends order confirmation emails |
+| checkoutservice | Go | Orchestrates checkout workflow |
+| recommendationservice | Python | Generates product recommendations |
+| adservice | Java | Provides advertisements |
+| loadgenerator | Python | Generates application traffic |
 
+---
 
+# 🔗 Service Communication
 
+The microservices communicate internally using:
 
+- gRPC
+- REST APIs
+- Kubernetes Service Discovery
 
+Example workflow:
 
+1. User places an order from frontend
+2. Checkout service processes the request
+3. Payment service validates payment
+4. Shipping service calculates shipping cost
+5. Email service sends confirmation
 
+---
 
+# 🗄️ Stateful vs Stateless Services
 
+Most services in this application are stateless and horizontally scalable.
 
-# Project Introduction
+Only the cart service uses Redis for persistent cart storage.
 
-## Project archietecure
+| Service Type | Example |
+|---|---|
+| Stateless Services | frontend, checkoutservice, recommendationservice |
+| Stateful Services | cartservice (Redis) |
 
 # Intro to Online Boutique App
 
