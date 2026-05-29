@@ -2255,7 +2255,7 @@ metadata:
   namespace: monitoring
 spec:
   hostnames:
-    - "grafana.devopsdock.site"
+    - "grafana.shuayeb.com"
   parentRefs:
   - group: gateway.networking.k8s.io
     namespace: default
@@ -2338,7 +2338,7 @@ metadata:
   namespace: monitoring
 spec:
   hostnames:
-    - "prometheus.devopsdock.site"
+    - "prometheus.shuayeb.com"
   parentRefs:
   - group: gateway.networking.k8s.io
     namespace: default
