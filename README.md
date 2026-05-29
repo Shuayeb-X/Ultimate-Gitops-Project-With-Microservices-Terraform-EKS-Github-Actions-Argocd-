@@ -591,7 +591,7 @@ eksctl utils associate-iam-oidc-provider \
     ```bash
     helm repo add eks https://aws.github.io/eks-charts
     ```
-    
+    ![image alt](load balancer install using helm.png)
 2. Update your local repo to make sure that you have the most recent charts.
     
     ```bash
@@ -632,7 +632,7 @@ eksctl utils associate-iam-oidc-provider \
     NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
     aws-load-balancer-controller   2/2     2            2           84s
     ```
-    
+    ![image alt](load balancer created.png)
 
 ## Gateway API
 
