@@ -591,7 +591,7 @@ eksctl utils associate-iam-oidc-provider \
     ```bash
     helm repo add eks https://aws.github.io/eks-charts
     ```
-    ![image alt](load balancer install using helm.png)
+    ![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/load%20balancer%20install%20using%20helm.png)
 2. Update your local repo to make sure that you have the most recent charts.
     
     ```bash
@@ -758,6 +758,7 @@ kubectl get gateway
 NAME              CLASS                   ADDRESS                                                                  PROGRAMMED   AGE
 app-alb-gateway   aws-alb-gateway-class   k8s-default-appalbga-65aa25bc91-1838810992.us-east-1.elb.amazonaws.com   Unknown      5s
 ```
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/gateway%20yaml%201.png)
 
 ## **Deploying External DNS:**
 
@@ -765,6 +766,8 @@ Docs:
 
 - [https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md#using-helm-with-oidc](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md#using-helm-with-oidc)
 - [https://kubernetes-sigs.github.io/external-dns/v0.13.1/tutorials/gateway-api/#manifest-with-rbac](https://kubernetes-sigs.github.io/external-dns/v0.13.1/tutorials/gateway-api/#manifest-with-rbac) (How to setup with GatewayAPI)
+
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/external-dns%20helm%20chart%20add.png)
 
 Create a file with below content for IAM policy:
 
@@ -844,6 +847,8 @@ eksctl create podidentityassociation \
   --role-name external-dns-pod-identity-role \
   --permission-policy-arns $POLICY_ARN
 ```
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/external%20dns%20set%20up.png)
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/pod%20identity%20agent.png)
 
 **Deploy ExternalDNS using Pod Identity**
 
@@ -897,6 +902,7 @@ Upgrade the install:
 ```bash
 helm upgrade -i external-dns external-dns/external-dns -f external-dns-values-1.20.0.yaml -n external-dns --version 1.20.0
 ```
+
 
 ## Deploy ArgoCD
 
@@ -977,6 +983,7 @@ Install the chart:
 ```bash
 helm install argo-cd argo/argo-cd -n argocd -f argocd-values-9.4.0.yaml --version 9.4.0 --create-namespace
 ```
+
 
 Add Target group config:
 
@@ -1106,8 +1113,12 @@ kubectl apply -f target-grp-config.yaml
 Access directly in the browser:
 
 ```bash
-https://argocd.devopsdock.site
+https://argocd.shuayeb.com
 ```
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/hosted%20argocd.png)
+### Argocd running with Https
+
+https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/Argocd%20with%20Https.png
 
 To get the password and user:
 
@@ -1127,6 +1138,7 @@ Login → User info → Update Password
 ```bash
 Argocd@xxx #Demo password
 ```
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/successfully%20https%20argocd%20log%20in.png)
 
 ## Now Lets set up the CI part in Github Action.
 
@@ -1136,7 +1148,7 @@ Once you have the images in the github packages, connect them to the repository.
 
 So that it shows up and linked to your repo like this.
 
-![image-magik.png](docs/images/image-magik.png)
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/packages.png)
 
 Go to the image →Package Setting, and give permission to the repo to run action.
 
@@ -1180,6 +1192,10 @@ Inside the `workflows` create two config file.
 >These files are already available in the github repo. You just need to modify them and use them as per your need.
 
 
+## GHCR Upload and Push
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/ghcr%20upload.png)
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/ghcr%20push.png)
+
 **`microservice-ci.yaml`**
 
 ```bash
@@ -1192,11 +1208,16 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     env:
-      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/microservices-demo/${{ inputs.service }}:sha-${{ github.sha }}
+      IMAGE_NAME: ghcr.io/shuayeb-x/microservices-demo/${{ inputs.service }}:sha-${{ github.sha }}
 
     steps:
       # -------------------
@@ -1206,7 +1227,7 @@ jobs:
         uses: actions/checkout@v4
 
       # -------------------
-      # Docker Buildx (cache support)
+      # Setup Docker Buildx
       # -------------------
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -1219,24 +1240,26 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       # -------------------
-      # Build Docker image (cached)
+      # Build Docker image
       # -------------------
       - name: Build Image
-        run: |
-          docker build \
-            --cache-from=type=gha \
-            --cache-to=type=gha,mode=max \
-            -t $IMAGE_NAME \
-            ./src/${{ inputs.service }}
+        uses: docker/build-push-action@v5
+        with:
+          context: ./src/${{ inputs.service }}
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_NAME }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # -------------------
-      # Security Scan (before push)
+      # Security Scan
       # -------------------
       - name: Run Trivy Scan
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: image
           image-ref: ${{ env.IMAGE_NAME }}
@@ -1245,11 +1268,10 @@ jobs:
           vuln-type: os,library
 
       # -------------------
-      # Push image (only if scan passes)
+      # Push Docker image
       # -------------------
       - name: Push Image
-        run: |
-          docker push $IMAGE_NAME
+        run: docker push $IMAGE_NAME
 ```
 
 > [!TIP]
@@ -1273,9 +1295,11 @@ name: Microservices Trigger CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - "src/**"
+      - ".github/workflows/**"
 
 permissions:
   contents: read
@@ -1283,10 +1307,11 @@ permissions:
 
 jobs:
   # -------------------------------
-  # Job 1: Detect changed services
+  # Detect changed services
   # -------------------------------
   detect-changes:
     runs-on: ubuntu-latest
+
     outputs:
       services: ${{ steps.changed.outputs.services }}
 
@@ -1308,11 +1333,12 @@ jobs:
           echo "Detected services: $SERVICES"
           echo "services=$SERVICES" >> $GITHUB_OUTPUT
 
-  # --------------------------------------------------
-  # Job 2: Call reusable workflow (matrix per service)
-  # --------------------------------------------------
+  # -------------------------------
+  # Build and push changed services
+  # -------------------------------
   build-and-push:
     needs: detect-changes
+
     if: needs.detect-changes.outputs.services != '[]'
 
     strategy:
@@ -1320,9 +1346,9 @@ jobs:
       matrix:
         service: ${{ fromJson(needs.detect-changes.outputs.services) }}
 
-    # 🚨 IMPORTANT:
-    # Reusable workflows are called at JOB level
     uses: ./.github/workflows/microservice-ci.yaml
+
+    secrets: inherit
 
     with:
       service: ${{ matrix.service }}
@@ -1525,7 +1551,7 @@ kubectl apply -f boutique-app.yaml
 
 Check the ArgoCD UI you should see the app visible there. And all Synced.
 
-![image.png](docs/images/image%203.png)
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/argrocd%20app%20running%202.png)
 
 # Now Lets integrate the CI with CD
 
@@ -1695,37 +1721,37 @@ spec:
 
       images:
         - alias: adservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/adservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/adservice
 
         - alias: cartservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/cartservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/cartservice
 
         - alias: checkoutservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/checkoutservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/checkoutservice
 
         - alias: currencyservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/currencyservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/currencyservice
 
         - alias: emailservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/emailservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/emailservice
 
         - alias: frontend
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/frontend
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/frontend
 
         - alias: paymentservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/paymentservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/paymentservice
 
         - alias: productcatalogservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/productcatalogservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/productcatalogservice
 
         - alias: recommendationservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/recommendationservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/recommendationservice
 
         - alias: shippingservice
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/shippingservice
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/shippingservice
 
         - alias: loadgenerator
-          imageName: ghcr.io/laxmikantagiri/microservices-demo/loadgenerator
+          imageName: ghcr.io/Shauyeb-X/microservices-demo/loadgenerator
 ```
 
 Apply it:
@@ -2452,7 +2478,7 @@ helm install eck-operator elastic/eck-operator --version 3.3.0 -n logging
 ```
 
 Create a storageclass so that elastic search can dynamically provision volume in AWS.
-
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/eck%20operator%20pod%20running.png)
  **vi `observability/storageclass.yaml`** 
 
 ```
@@ -2530,7 +2556,7 @@ NAME                                                STATUS   VOLUME             
 elasticsearch-data-eck-elasticsearch-es-default-0   Bound    pvc-f1441351-e44e-4c1b-a28f-fa9d636b5dfb   1Gi        RWO            ebs-aws        <unset>                 3m39s
 
 ```
-
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/eck%20search%20and%20pvc%20bound.png)                                        
 ### Install **`eck-beat`** for shipping the log:
 
 We will use Filebeat:
@@ -2708,7 +2734,7 @@ eck-elasticsearch-es-default-0   1/1     Running   0          57m
 elastic-operator-0               1/1     Running   0          98m
 
 ```
-
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/eck-beat%20running.png)
 Check the CR:
 
 ```bash
@@ -2752,7 +2778,7 @@ kubectl get kibana -n logging
 NAME         HEALTH   NODES   VERSION   AGE
 eck-kibana   green    1       9.3.0     3m10s
 ```
-
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/eck-kibana%20isntall.png)
 Check pods:
 
 ```bash
@@ -2766,6 +2792,9 @@ eck-elasticsearch-es-default-0   1/1     Running   0          8h
 eck-kibana-kb-649c97899-2xn6p    1/1     Running   0          2m52s
 elastic-operator-0               1/1     Running   0          8h
 ```
+## All are Running
+
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/eck-all-running.png)
 
 Lets create an `httproute` and `targetgroupconfiguration` for kibana so that we can expose it through gatewayAPI
 
@@ -2779,7 +2808,7 @@ metadata:
   namespace: logging
 spec:
   hostnames:
-    - "kibana.devopsdock.site"
+    - "kibana.shuayeb.com"
   parentRefs:
   - group: gateway.networking.k8s.io
     namespace: default
@@ -2850,7 +2879,7 @@ Verify:
 ```bash
 kubectl get httproute -n logging
 NAME           HOSTNAMES               AGE
-kibana-route   ["kibana.devopsdock.site"]   74s
+kibana-route   ["kibana.shuayeb.com"]   74s
 ```
 
 ```bash
@@ -2859,9 +2888,9 @@ NAME               SERVICE-NAME         AGE
 kibana-tg-config   eck-kibana-kb-http   85s
 ```
 
-Head to the browser and access you kibana UI using the host name “`kibana.dsvault.in`”
+Head to the browser and access you kibana UI using the host name “`kibana.shuayeb.`”
 
-![image.png](docs/images/image%2028.png)
+![image.png](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/kiabaa%20ui.png)
 
 The defaukt user is  **`elastic` .** Get you password from the below command
 
@@ -2985,7 +3014,7 @@ recommendationservice-6685dcbd7d-xwlsz   4m           41Mi
 redis-cart-8649b96fbb-vw2bw              2m           6Mi             
 shippingservice-586996844-jncl4          1m           9Mi
 ```
-
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/metrics%20verifying.png)
 ### STEP 2 — Verify Resource Requests Are Set
 
 HPA needs CPU requests defined.
@@ -3049,6 +3078,7 @@ Check:
 ```bash
 kubectl get hpa -n boutique-app
 ```
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/hpa.png)
 
 ### STEP 4 — Increase Load (Not required in our case)
 
@@ -3189,7 +3219,7 @@ frontend-57c5fdc47c-zhmk4                1/1     Running   0               4m50s
 Scaling up automatically.
 
 ---
-
+![image alt](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/scalling%20hpa.png)
 ### Validate CPU Trigger
 
 Run:
