@@ -632,7 +632,7 @@ eksctl utils associate-iam-oidc-provider \
     NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
     aws-load-balancer-controller   2/2     2            2           84s
     ```
-    ![image alt](load balancer created.png)
+    ![image alt]([load balancer created.png](https://github.com/Shuayeb-X/Photos-Unlitimate-devops/blob/main/load%20balancer%20created.png))
 
 ## Gateway API
 
